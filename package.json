@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "TypeScript logging utility",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "clean": "rm -rf lib",
     "build": "npx tsc",
