@@ -1,16 +1,19 @@
-enum LogLevel {
-  DEBUG = 0,
-  INFO = 1,
-  LOG = 2,
-  WARN = 4,
-  ERROR = 8,
-}
-
-export class Logger {
-  label: string = "";
+class Logger {
+  label: string | Logger.LabelFunction = "";
 
   constructor(label: string) {
     this.#init.call(this, label);
+  }
+
+  #getLabel() {
+    let label: string;
+    if (typeof this.label === "string") {
+      label = this.label;
+    } else {
+      label = this.label();
+    }
+
+    return `[${label}]`;
   }
 
   #init(label?: string) {
@@ -21,12 +24,12 @@ export class Logger {
     }
   }
 
-  #output(type: LogLevel, args: any) {
+  #output(type: Logger.Level, args: any) {
     try {
       let isFirstArgString =
         typeof args[0] === "string" || args[0] instanceof String;
 
-      if (type == LogLevel.DEBUG) {
+      if (type == Logger.Level.DEBUG) {
         if (isFirstArgString) {
           args[0] = `[DEBUG] ${args[0]}`;
         } else {
@@ -35,26 +38,26 @@ export class Logger {
       }
 
       if (isFirstArgString) {
-        args[0] = `[${this.label}] ${args[0]}`;
+        args[0] = `${this.#getLabel()} ${args[0]}`;
       } else {
-        args.unshift(`[${this.label}]`);
+        args.unshift(`${this.#getLabel()}`);
       }
 
       let method: keyof Console;
       switch (type) {
-        case LogLevel.DEBUG:
+        case Logger.Level.DEBUG:
           method = "debug";
           break;
-        case LogLevel.ERROR:
+        case Logger.Level.ERROR:
           method = "error";
           break;
-        case LogLevel.INFO:
+        case Logger.Level.INFO:
           method = "info";
           break;
-        case LogLevel.LOG:
+        case Logger.Level.LOG:
           method = "log";
           break;
-        case LogLevel.WARN:
+        case Logger.Level.WARN:
           method = "warn";
           break;
         default:
@@ -67,19 +70,19 @@ export class Logger {
   }
 
   debug(...args: any[]) {
-    this.#output(LogLevel.DEBUG, args);
+    this.#output(Logger.Level.DEBUG, args);
   }
 
   error(...args: any[]) {
-    this.#output(LogLevel.ERROR, args);
+    this.#output(Logger.Level.ERROR, args);
   }
 
   group(label: string = "") {
-    console.group(`[${this.label}] ${label}`);
+    console.group(`${this.#getLabel()} ${label}`);
   }
 
   groupCollapsed(label: string = "") {
-    console.groupCollapsed(`[${this.label}] ${label}`);
+    console.groupCollapsed(`${this.#getLabel()} ${label}`);
   }
 
   groupEnd() {
@@ -87,24 +90,24 @@ export class Logger {
   }
 
   info(...args: any[]) {
-    this.#output(LogLevel.INFO, args);
+    this.#output(Logger.Level.INFO, args);
   }
 
   log(...args: any[]) {
-    this.#output(LogLevel.LOG, args);
+    this.#output(Logger.Level.LOG, args);
   }
 
   time(label: string = "") {
-    console.time(`[${this.label}] ${label}`);
+    console.time(`${this.#getLabel()} ${label}`);
   }
   timeEnd(label: string = "") {
-    console.timeEnd(`[${this.label}] ${label}`);
+    console.timeEnd(`${this.#getLabel()} ${label}`);
   }
   timeLog(label: string = "") {
-    console.timeLog(`[${this.label}] ${label}`);
+    console.timeLog(`${this.#getLabel()} ${label}`);
   }
   warn(...args: any[]) {
-    this.#output(LogLevel.WARN, args);
+    this.#output(Logger.Level.WARN, args);
   }
 
   public static Create(name: string) {
@@ -123,6 +126,17 @@ export class Logger {
       _info: logger.info.bind(logger),
       _warn: logger.warn.bind(logger),
     };
+  }
+}
+
+namespace Logger {
+  export type LabelFunction = () => string;
+  export enum Level {
+    DEBUG = 0,
+    INFO = 1,
+    LOG = 2,
+    WARN = 4,
+    ERROR = 8,
   }
 }
 
