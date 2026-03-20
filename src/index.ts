@@ -1,4 +1,4 @@
-class Logger {
+export class Logger {
   label: string | Logger.LabelFunction = "";
 
   constructor(label: string) {
@@ -129,7 +129,7 @@ class Logger {
   }
 }
 
-namespace Logger {
+export namespace Logger {
   export type LabelFunction = () => string;
   export enum Level {
     DEBUG = 0,
