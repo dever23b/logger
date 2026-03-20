@@ -1,4 +1,4 @@
-import { Logger } from "../src/index";
+import Logger from "../src/index";
 
 describe("Logger class", () => {
   it("can be instantiated", () => {
