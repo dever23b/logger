@@ -140,4 +140,5 @@ export namespace Logger {
   }
 }
 
+/** @deprecated Use named export instead */
 export default Logger;
